@@ -2,37 +2,31 @@
   {
     "id": 1,
     "difficulty": "easy",
-    "category": "quotes",
     "text": "The only way to do great work is to love what you do."
   },
   {
     "id": 2,
     "difficulty": "easy",
-    "category": "lyrics",
     "text": "Here comes the sun, and I say it's all right."
   },
   {
     "id": 3,
     "difficulty": "medium",
-    "category": "quotes",
     "text": "Success usually comes to those who are too busy to be looking for it."
   },
   {
     "id": 4,
     "difficulty": "medium",
-    "category": "code",
     "text": "function greet(name) { return `Hello, ${name}!`; }"
   },
   {
     "id": 5,
     "difficulty": "hard",
-    "category": "quotes",
     "text": "In the midst of chaos, there is also opportunity."
   },
   {
     "id": 6,
     "difficulty": "hard",
-    "category": "code",
     "text": "const debounce = (fn, delay) => { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); }; };"
   }
 ]
