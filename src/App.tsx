@@ -8,6 +8,7 @@ import ModeSelector from "./components/ModeSelector/ModeSelector";
 import RestartButton from "./components/RestartButton/RestartButton";
 import StatsPanel from "./components/StatsPanel/StatsPanel";
 import TypingArea from "./components/TypingArea/TypingArea";
+import { useTypingEngine } from "./hooks/useTypiningEngine";
 
 function App() {
   const [difficulty, setDifficulty] = useState<string>("hard");
@@ -19,12 +20,14 @@ function App() {
   const [wpm, setWpm] = useState<number>(0);
   const [accuracy, setAccuracy] = useState<number>(100);
   const [time, setTime] = useState<string>("0:00");
+  const typing = useTypingEngine(passage?.text ?? "");
 
   const handleRestart = () => {
     setPassage(getRandomPassage(difficulty));
     setWpm(0);
     setAccuracy(100);
     setTime("0:00");
+    typing.reset();
   };
 
   useEffect(() => {
@@ -49,7 +52,7 @@ function App() {
           </div>
         </div>
 
-        <TypingArea passage={passage} />
+        <TypingArea passage={passage} typing={typing} />
 
         <div className="flex justify-center">
           <RestartButton onRestart={handleRestart} />

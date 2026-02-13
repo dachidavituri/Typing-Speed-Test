@@ -1,3 +1,5 @@
+import type { useTypingEngine } from "@/hooks/useTypiningEngine";
+
 export interface Passage {
   id: number;
   difficulty: string;
@@ -6,4 +8,5 @@ export interface Passage {
 
 export interface TypingAreaProps {
   passage: Passage | null;
+  typing: ReturnType<typeof useTypingEngine>;
 }
