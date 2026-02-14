@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { getRandomPassage } from "./utils/getRandomPassage";
-import type { Passage } from "./components/TypingArea/index.types";
 import DifficultySelector from "./components/DifficultySelector/DifficultySelector";
 import DurationSelector from "./components/DurationSelector/DurationSelector";
 import Header from "./components/Header/Header";
@@ -8,31 +7,27 @@ import ModeSelector from "./components/ModeSelector/ModeSelector";
 import RestartButton from "./components/RestartButton/RestartButton";
 import StatsPanel from "./components/StatsPanel/StatsPanel";
 import TypingArea from "./components/TypingArea/TypingArea";
-import { useTypingEngine } from "./hooks/useTypiningEngine";
+import { useTypingGame } from "./hooks/useTypingGame";
+import type { Passage } from "./components/TypingArea/index.types";
 
 function App() {
-  const [difficulty, setDifficulty] = useState<string>("hard");
+  const [difficulty, setDifficulty] = useState("hard");
   const [mode, setMode] = useState<string>("timed");
-  const [duration, setDuration] = useState<number>(60);
+  const [duration, setDuration] = useState(60);
+
   const [passage, setPassage] = useState<Passage | null>(
     getRandomPassage(difficulty),
   );
-  const [wpm, setWpm] = useState<number>(0);
-  const [accuracy, setAccuracy] = useState<number>(100);
-  const [time, setTime] = useState<string>("0:00");
-  const typing = useTypingEngine(passage?.text ?? "");
-
-  const handleRestart = () => {
-    setPassage(getRandomPassage(difficulty));
-    setWpm(0);
-    setAccuracy(100);
-    setTime("0:00");
-    typing.reset();
-  };
 
   useEffect(() => {
     setPassage(getRandomPassage(difficulty));
   }, [difficulty]);
+
+  const game = useTypingGame({
+    passage: passage?.text ?? "",
+    mode,
+    duration,
+  });
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-gray-300 flex justify-center px-4 py-8">
@@ -40,7 +35,12 @@ function App() {
         <Header bestWPM={92} />
 
         <div className="flex flex-wrap items-center justify-between mt-6 gap-4">
-          <StatsPanel wpm={wpm} accuracy={accuracy} time={time} />
+          <StatsPanel
+            wpm={game.wpm}
+            accuracy={game.accuracy}
+            time={game.formattedTime}
+          />
+
           <div className="flex flex-wrap items-center gap-4">
             <DifficultySelector
               difficulty={difficulty}
@@ -52,10 +52,10 @@ function App() {
           </div>
         </div>
 
-        <TypingArea passage={passage} typing={typing} />
+        <TypingArea passage={passage} typing={game.typing} />
 
         <div className="flex justify-center">
-          <RestartButton onRestart={handleRestart} />
+          <RestartButton onRestart={game.restart} />
         </div>
       </div>
     </div>
