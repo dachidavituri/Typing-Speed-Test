@@ -42,6 +42,12 @@ export function useTypingGame({ passage, mode, duration }: UseTypingGameProps) {
   }, [typing.currentIndex, mode, passage.length]);
 
   useEffect(() => {
+    if (mode === "timed" && typing.typed.length === passage.length) {
+      setIsFinished(true);
+    }
+  }, [mode, passage.length, typing.typed.length]);
+
+  useEffect(() => {
     if (!isFinished) return;
 
     const minutes = (mode === "timed" ? duration - seconds : seconds) / 60;
