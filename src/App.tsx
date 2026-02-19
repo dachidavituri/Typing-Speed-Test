@@ -9,6 +9,7 @@ import StatsPanel from "./components/StatsPanel/StatsPanel";
 import TypingArea from "./components/TypingArea/TypingArea";
 import { useTypingGame } from "./hooks/useTypingGame";
 import type { Passage } from "./components/TypingArea/index.types";
+import { getLocalStats } from "./utils/localStats";
 
 function App() {
   const [difficulty, setDifficulty] = useState("hard");
@@ -29,10 +30,12 @@ function App() {
     duration,
   });
 
+  const stats = getLocalStats();
+
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-gray-300 flex justify-center px-4 py-8">
       <div className="w-full max-w-6xl">
-        <Header bestWPM={92} />
+        <Header bestWPM={stats.bestWPM} />
 
         <div className="flex flex-wrap items-center justify-between mt-6 gap-4">
           <StatsPanel
@@ -53,6 +56,11 @@ function App() {
         </div>
 
         <TypingArea passage={passage} typing={game.typing} />
+        {game.message && (
+          <div className="text-center mt-6 text-xl font-bold text-green-400">
+            {game.message}
+          </div>
+        )}
 
         <div className="flex justify-center">
           <RestartButton onRestart={game.restart} />

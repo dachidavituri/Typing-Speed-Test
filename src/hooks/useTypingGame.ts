@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 import { useTypingEngine } from "./useTypiningEngine";
+import confetti from "canvas-confetti";
+import {
+  getLocalStats,
+  saveLocalStats,
+  type LocalStats,
+} from "@/utils/localStats";
 
 interface UseTypingGameProps {
   passage: string;
@@ -14,6 +20,8 @@ export function useTypingGame({ passage, mode, duration }: UseTypingGameProps) {
   const [isFinished, setIsFinished] = useState(false);
   const [wpm, setWpm] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
+  const [message, setMessage] = useState<string | null>(null);
+  const [isNewRecord, setIsNewRecord] = useState(false);
 
   useEffect(() => {
     if (!typing.isStarted || isFinished) return;
@@ -48,28 +56,100 @@ export function useTypingGame({ passage, mode, duration }: UseTypingGameProps) {
   }, [mode, passage.length, typing.typed.length]);
 
   useEffect(() => {
-    if (!isFinished) return;
+    if (!typing.isStarted) return;
 
-    const minutes = (mode === "timed" ? duration - seconds : seconds) / 60;
+    const elapsed = Math.max(
+      1,
+      mode === "timed" ? duration - seconds : seconds,
+    );
+
+    const minutes = elapsed / 60;
+
     if (minutes <= 0) return;
 
     const words = typing.typed.length / 5;
-    const calculatedWPM = Math.round(words / minutes);
+    const liveWpm = Math.round(words / minutes);
 
     const totalTyped = typing.typed.length;
     const correct = totalTyped - typing.errors;
-    const calculatedAccuracy =
+    const liveAccuracy =
       totalTyped === 0 ? 100 : Math.round((correct / totalTyped) * 100);
 
-    setWpm(calculatedWPM);
-    setAccuracy(calculatedAccuracy);
-  }, [isFinished, seconds, duration, mode, typing.errors, typing.typed.length]);
+    setWpm(liveWpm);
+    setAccuracy(liveAccuracy);
+  }, [
+    typing.typed.length,
+    typing.errors,
+    seconds,
+    mode,
+    typing.isStarted,
+    duration,
+  ]);
+
+  useEffect(() => {
+    if (!isFinished) return;
+
+    const elapsed = mode === "timed" ? duration - seconds : seconds;
+
+    if (elapsed <= 0) return;
+    const minutes = elapsed / 60;
+    const words = typing.typed.length / 5;
+
+    const finalWPM = Math.round(words / minutes);
+
+    const totalTyped = typing.typed.length;
+    const correct = totalTyped - typing.errors;
+
+    const finalAccuracy =
+      totalTyped === 0 ? 100 : Math.round((correct / totalTyped) * 100);
+
+    setWpm(finalWPM);
+    setAccuracy(finalAccuracy);
+
+    const stats = getLocalStats();
+    const isFirstGame = stats.history.length === 0;
+    const beatWPM = finalWPM > stats.bestWPM;
+
+    const updatedStats: LocalStats = {
+      bestWPM: beatWPM ? finalWPM : stats.bestWPM,
+      bestAccuracy:
+        finalAccuracy > stats.bestAccuracy ? finalAccuracy : stats.bestAccuracy,
+      history: [
+        ...stats.history,
+        {
+          wpm: finalWPM,
+          accuracy: finalAccuracy,
+          date: new Date().toISOString(),
+        },
+      ],
+    };
+
+    saveLocalStats(updatedStats);
+
+    if (isFirstGame) {
+      setMessage("Baseline Established!");
+    } else if (beatWPM) {
+      setMessage("High Score Smashed!");
+      setIsNewRecord(true);
+
+      confetti({
+        particleCount: 160,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+    } else {
+      setMessage(null);
+      setIsNewRecord(false);
+    }
+  }, [duration, isFinished, mode, seconds, typing.errors, typing.typed.length]);
 
   const restart = () => {
     typing.reset();
     setIsFinished(false);
     setWpm(0);
     setAccuracy(100);
+    setMessage(null);
+    setIsNewRecord(false);
     setSeconds(mode === "timed" ? duration : 0);
   };
 
@@ -89,5 +169,7 @@ export function useTypingGame({ passage, mode, duration }: UseTypingGameProps) {
     formattedTime,
     isFinished,
     restart,
+    message,
+    isNewRecord,
   };
 }
