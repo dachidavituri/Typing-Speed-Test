@@ -10,6 +10,7 @@ import TypingArea from "./components/TypingArea/TypingArea";
 import { useTypingGame } from "./hooks/useTypingGame";
 import type { Passage } from "./components/TypingArea/index.types";
 import { getLocalStats } from "./utils/localStats";
+import StatsChart from "./components/BarChart/BarChart";
 
 function App() {
   const [difficulty, setDifficulty] = useState("hard");
@@ -31,6 +32,21 @@ function App() {
   });
 
   const stats = getLocalStats();
+  console.log(stats.history);
+  const sumWpm = stats.history.reduce(
+    (accumulator, current) => accumulator + current.wpm,
+    0,
+  );
+  const sumAccuracy = stats.history.reduce(
+    (accumulator, current) => accumulator + current.accuracy,
+    0,
+  );
+  const avgWpm =
+    stats.history.length > 0 ? (sumWpm / stats.history.length).toFixed(2) : 0;
+  const avgAccuracy =
+    stats.history.length > 0
+      ? (sumAccuracy / stats.history.length).toFixed(2)
+      : 0;
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-gray-300 flex justify-center px-4 py-8">
@@ -65,6 +81,13 @@ function App() {
         <div className="flex justify-center">
           <RestartButton onRestart={game.restart} />
         </div>
+        <div className="h-125">
+          <StatsChart history={stats.history} />
+        </div>
+        <h1 className="mt-3 text-green-400 font-semibold">AVG wpm: {avgWpm}</h1>
+        <h1 className="mt-3 text-green-400 font-semibold">
+          AVG accuracy: {avgAccuracy}%
+        </h1>
       </div>
     </div>
   );

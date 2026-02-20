@@ -2,31 +2,85 @@
   {
     "id": 1,
     "difficulty": "easy",
-    "text": "The only way to do great work is to love what you do."
+    "text": "Every day is a new chance to learn something useful and become a little better than yesterday. Small steps, taken with patience and care, slowly build strong skills and lasting confidence."
   },
   {
     "id": 2,
     "difficulty": "easy",
-    "text": "Here comes the sun, and I say it's all right."
+    "text": "The sun rises, birds sing, and a quiet morning begins. You make a warm drink, sit near the window, and plan your goals with a calm and focused mind."
   },
+
   {
     "id": 3,
     "difficulty": "medium",
-    "text": "Success usually comes to those who are too busy to be looking for it."
+    "text": "Success usually comes to people who stay consistent, even when progress feels slow. They practice daily, accept mistakes as lessons, and keep moving forward with determination and curiosity."
   },
   {
     "id": 4,
     "difficulty": "medium",
-    "text": "function greet(name) { return `Hello, ${name}!`; }"
+    "text": "function greetUser(name) { const message = `Hello, ${name}! Welcome back.`; console.log(message); return message; } // This simple function shows how variables and templates work together."
   },
+
   {
     "id": 5,
     "difficulty": "hard",
-    "text": "In the midst of chaos, there is also opportunity."
+    "text": "In the middle of uncertainty and rapid change, the people who adapt quickly often discover unexpected opportunities. They analyze problems carefully, communicate clearly, and make thoughtful decisions based on both logic and experience."
   },
   {
     "id": 6,
     "difficulty": "hard",
-    "text": "const debounce = (fn, delay) => { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); }; };"
+    "text": "const debounce = (fn, delay = 300) => { let timer = null; return (...args) => { if (timer) clearTimeout(timer); timer = setTimeout(() => { fn.apply(null, args); }, delay); }; }; // Debounce prevents functions from running too often during rapid user input."
+  },
+  {
+    "id": 7,
+    "difficulty": "easy",
+    "text": "Learning new skills takes time, patience, and practice. When you repeat small exercises every day, your mind becomes stronger and your hands move faster. Progress may feel slow, but steady effort always creates real improvement."
+  },
+  {
+    "id": 8,
+    "difficulty": "easy",
+    "text": "A calm morning walk can clear your thoughts and prepare you for a productive day. Fresh air, quiet streets, and simple moments help you focus on your goals and appreciate the small joys of life."
+  },
+
+  {
+    "id": 9,
+    "difficulty": "medium",
+    "text": "Great teams succeed because they communicate openly and solve problems together. They share ideas, listen carefully, and support each other when challenges appear, knowing that cooperation often leads to stronger results than working alone."
+  },
+  {
+    "id": 10,
+    "difficulty": "medium",
+    "text": "const calculateTotal = (items) => { return items.reduce((sum, item) => sum + item.price * item.quantity, 0); }; // This helper function loops through an array and returns the final total price of all products."
+  },
+  {
+    "id": 11,
+    "difficulty": "medium",
+    "text": "Technology moves fast, and developers must keep learning to stay current. Reading documentation, building small projects, and reviewing code written by others can dramatically improve your understanding and confidence."
+  },
+
+  {
+    "id": 12,
+    "difficulty": "hard",
+    "text": "While working on complex projects, engineers often balance performance, readability, and maintainability. Writing clear functions, adding meaningful comments, and testing edge cases carefully can save countless hours of debugging later."
+  },
+  {
+    "id": 13,
+    "difficulty": "hard",
+    "text": "const fetchUsers = async () => { try { const res = await fetch('/api/users'); if (!res.ok) throw new Error('Request failed'); const data = await res.json(); return data; } catch (err) { console.error('Fetch error:', err.message); return []; } };"
+  },
+  {
+    "id": 14,
+    "difficulty": "hard",
+    "text": "Building a successful product requires more than good code. Designers must understand users, analysts must measure results, and developers must iterate quickly while maintaining stability, security, and performance under real-world pressure."
+  },
+  {
+    "id": 15,
+    "difficulty": "hard",
+    "text": "function memoize(fn) { const cache = new Map(); return function(...args) { const key = JSON.stringify(args); if (cache.has(key)) return cache.get(key); const result = fn(...args); cache.set(key, result); return result; }; } // Memoization improves performance."
+  },
+  {
+    "id": 16,
+    "difficulty": "hard",
+    "text": "Discipline, curiosity, and resilience define long-term success in any technical career. When you keep experimenting, documenting what you learn, and teaching others, your knowledge grows deeper and your confidence becomes unshakable."
   }
 ]
