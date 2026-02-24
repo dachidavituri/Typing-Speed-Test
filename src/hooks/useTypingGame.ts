@@ -171,5 +171,6 @@ export function useTypingGame({ passage, mode, duration }: UseTypingGameProps) {
     restart,
     message,
     isNewRecord,
+    keyStats: typing.keyStats
   };
 }

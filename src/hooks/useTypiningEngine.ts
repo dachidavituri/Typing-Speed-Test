@@ -6,8 +6,15 @@ export function useTypingEngine(passage: string) {
   const [errors, setErrors] = useState<number>(0);
   const [isStarted, setIsStarted] = useState<boolean>(false);
 
+  const [keyStats, setKeyStats] = useState<
+    Record<string, { pressed: number; errors: number }>
+  >({});
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === " " || e.key === "Spacebar") {
+        e.preventDefault();
+      }
       const key = e.key;
       const expected = passage[currentIndex];
       if (!isStarted) {
@@ -19,6 +26,13 @@ export function useTypingEngine(passage: string) {
         const expectedChar = passage[currentIndex - 1];
         if (deletedChar !== expectedChar) {
           setErrors((err) => Math.max(0, err - 1));
+          setKeyStats((prev) => ({
+            ...prev,
+            [deletedChar]: {
+              pressed: (prev[deletedChar]?.pressed ?? 0) + 1,
+              errors: Math.max(0, (prev[deletedChar]?.errors ?? 1) - 1),
+            },
+          }));
         }
 
         setCurrentIndex((curr) => curr - 1);
@@ -29,9 +43,15 @@ export function useTypingEngine(passage: string) {
 
       if (currentIndex >= passage.length) return;
 
-      if (key !== expected) {
-        setErrors((e) => e + 1);
-      }
+      const isError = key !== expected;
+      if (isError) setErrors((e) => e + 1);
+      setKeyStats((prev) => ({
+        ...prev,
+        [key]: {
+          pressed: (prev[key]?.pressed ?? 0) + 1,
+          errors: (prev[key]?.errors ?? 0) + (isError ? 1 : 0),
+        },
+      }));
       setTyped((prev) => [...prev, key]);
       setCurrentIndex((i) => i + 1);
     },
@@ -43,6 +63,7 @@ export function useTypingEngine(passage: string) {
     setTyped([]);
     setErrors(0);
     setIsStarted(false);
+    setKeyStats({});
   };
   return {
     currentIndex,
@@ -51,5 +72,6 @@ export function useTypingEngine(passage: string) {
     handleKeyDown,
     errors,
     typed,
+    keyStats,
   };
 }

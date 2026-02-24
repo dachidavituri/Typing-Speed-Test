@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getRandomPassage } from "./utils/getRandomPassage";
 import DifficultySelector from "./components/DifficultySelector/DifficultySelector";
 import DurationSelector from "./components/DurationSelector/DurationSelector";
@@ -11,6 +11,8 @@ import { useTypingGame } from "./hooks/useTypingGame";
 import type { Passage } from "./components/TypingArea/index.types";
 import { getLocalStats } from "./utils/localStats";
 import StatsChart from "./components/BarChart/BarChart";
+import KeyboardHeatmap from "./components/KeyboardHeatmap/KeyboardHeatmap";
+import { toPng } from "html-to-image";
 
 function App() {
   const [difficulty, setDifficulty] = useState("hard");
@@ -48,17 +50,37 @@ function App() {
       ? (sumAccuracy / stats.history.length).toFixed(2)
       : 0;
 
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const donwloadResult = async () => {
+    if (!cardRef.current) return;
+    const dataUrl = await toPng(cardRef.current);
+    const link = document.createElement("a");
+    link.download = "typing_result.png";
+    link.href = dataUrl;
+    link.click();
+  };
+
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-gray-300 flex justify-center px-4 py-8">
       <div className="w-full max-w-6xl">
         <Header bestWPM={stats.bestWPM} />
 
-        <div className="flex flex-wrap items-center justify-between mt-6 gap-4">
-          <StatsPanel
-            wpm={game.wpm}
-            accuracy={game.accuracy}
-            time={game.formattedTime}
-          />
+        <div className="flex flex-wrap items-center justify-between mt-6 gap-4 max-w-full">
+          <div ref={cardRef}>
+            <StatsPanel
+              wpm={game.wpm}
+              accuracy={game.accuracy}
+              time={game.formattedTime}
+            />
+            <KeyboardHeatmap keyStats={game.keyStats} />
+            <button
+              onClick={donwloadResult}
+              className="cursor-pointer p-1 mt-3 border border-white bg-transparant text-gray-200 hover:bg-gray-600 rounded-xl"
+            >
+              Donwload Result
+            </button>
+          </div>
 
           <div className="flex flex-wrap items-center gap-4">
             <DifficultySelector
@@ -81,6 +103,7 @@ function App() {
         <div className="flex justify-center">
           <RestartButton onRestart={game.restart} />
         </div>
+        <div></div>
         <div className="h-125">
           <StatsChart history={stats.history} />
         </div>
